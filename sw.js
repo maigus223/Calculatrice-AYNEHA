@@ -1,5 +1,12 @@
-const CACHE_NAME = 'ayneha-calc-v12';
-const CORE_ASSETS = ['./', './index.html', './manifest.json', './ayenha-chiffres.ttf', './icons/icon-192.png', './icons/icon-512.png'];
+const CACHE_NAME = 'ayneha-calc-v13';
+const CORE_ASSETS = [
+  './',
+  './index.html',
+  './manifest.json',
+  './ayenha-chiffres.ttf',
+  './icons/icon-192.png',
+  './icons/icon-512.png'
+];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(

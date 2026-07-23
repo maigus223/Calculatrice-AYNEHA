@@ -9,21 +9,22 @@
 <style>
 @font-face{font-family:'AYNEHA';src:url('ayenha-chiffres.ttf') format('truetype');font-weight:normal;font-style:normal;font-display:swap}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{background-color:#12141A;color:#FFFFFF;font-family:'AYNEHA',sans-serif;direction:rtl;text-align:right;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+body{background-color:#12141A;color:#FFF;font-family:'AYNEHA',sans-serif;direction:rtl;text-align:right;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:20px}
 header{text-align:center;margin-bottom:20px;width:100%;max-width:400px}
 .eyebrow{font-family:sans-serif;font-size:0.8rem;color:#3182CE;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px}
-h1{font-size:1.5rem;color:#FFFFFF;font-family:sans-serif;margin-bottom:5px}
+h1{font-size:1.5rem;color:#FFF;font-family:sans-serif;margin-bottom:5px}
 header p{font-family:sans-serif;font-size:0.85rem;color:#A0AEC0}
 .display-container{width:100%;max-width:400px;background-color:#1A1D26;border-radius:16px;padding:20px;margin-bottom:20px;box-shadow:0 4px 12px rgba(0,0,0,0.3)}
-#display{width:100%;background:transparent;border:none;color:#FFFFFF;font-size:3rem;direction:rtl;text-align:right;unicode-bidi:bidi-override;font-family:'AYNEHA',sans-serif;outline:none;overflow-x:auto;white-space:nowrap}
+#display{width:100%;background:transparent;border:none;color:#FFF;font-size:3rem;direction:rtl;text-align:right;font-family:'AYNEHA',sans-serif;outline:none;overflow-x:auto;white-space:nowrap}
 .keypad{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;width:100%;max-width:400px;direction:rtl}
-.btn{background-color:#2D3748;color:#FFFFFF;border:none;border-radius:12px;font-size:1.8rem;font-family:'AYNEHA',sans-serif;padding:20px 0;cursor:pointer;transition:background-color 0.1s,transform 0.05s;min-height:64px;display:flex;align-items:center;justify-content:center}
+.btn{background-color:#2D3748;color:#FFF;border:none;border-radius:12px;font-size:1.8rem;font-family:'AYNEHA',sans-serif;padding:20px 0;cursor:pointer;transition:background-color 0.1s,transform 0.05s;min-height:64px;display:flex;align-items:center;justify-content:center}
 .btn:active{background-color:#4A5568;transform:scale(0.95)}
 .btn.operator{background-color:#3182CE}
 .btn.operator:active{background-color:#2B6CB0}
 .btn.action{background-color:#E53E3E}
 .btn.action:active{background-color:#C53030}
 .btn.zero{grid-column:span 2}
+.btn svg{width:24px;height:24px;fill:#FFF}
 .status{margin-top:20px;font-size:0.8rem;color:#48BB78;font-family:sans-serif;text-align:center}
 footer{margin-top:30px;font-family:sans-serif;font-size:0.7rem;color:#718096;text-align:center;letter-spacing:1px;line-height:1.5}
 </style>
@@ -39,7 +40,9 @@ footer{margin-top:30px;font-family:sans-serif;font-size:0.7rem;color:#718096;tex
 </div>
 <div class="keypad">
 <button class="btn action" onclick="clearDisplay()">C</button>
-<button class="btn action" onclick="backspace()">⌫</button>
+<button class="btn action" onclick="backspace()">
+<svg viewBox="0 0 24 24"><path d="M22 3H7c-.69 0-1.23.35-1.59.88L0 12l5.41 8.11c.36.53.9.89 1.59.89h15c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-3 12.59L17.59 17 14 13.41 10.41 17 9 15.59 12.59 12 9 8.41 10.41 7 14 10.59 17.59 7 19 8.41 15.41 12 19 15.59z"/></svg>
+</button>
 <button class="btn operator" onclick="appendOperator('%')">%</button>
 <button class="btn operator" onclick="appendOperator('÷')">÷</button>
 <button class="btn" onclick="appendNumber('\uE007')">&#xE007;</button>
@@ -67,7 +70,7 @@ function formatWithThousandsSeparator(numberStr){
 const parts=numberStr.split('.');
 const integerPart=parts[0];
 const decimalPart=parts.length>1?parts[1]:'';
-const formattedInteger=integerPart.replace(/\B(?=(\d{3})+(?!\d))/g,'\u00A0');
+const formattedInteger=integerPart.replace(/\B(?=(\d{3})+(?!\d))/g,' ');
 return decimalPart?formattedInteger+'.'+decimalPart:formattedInteger;
 }
 function updateDisplay(){display.value=currentExpression}
@@ -84,7 +87,7 @@ let evalString=currentExpression
 .replace(/\uE006/g,'6').replace(/\uE007/g,'7').replace(/\uE008/g,'8')
 .replace(/\uE009/g,'9')
 .replace(/×/g,'*').replace(/÷/g,'/').replace(/−/g,'-')
-.replace(/\u00A0/g,'');
+.replace(/ /g,'');
 try{
 let result=new Function('return '+evalString)();
 if(!isFinite(result)||isNaN(result))throw new Error('Invalid');

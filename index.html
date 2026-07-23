@@ -6,7 +6,6 @@
     <meta name="theme-color" content="#12141A">
     <title>Calculatrice AYNEHA</title>
     <link rel="manifest" href="manifest.json">
-    
     <style>
         @font-face {
             font-family: 'AYNEHA';
@@ -15,13 +14,11 @@
             font-style: normal;
             font-display: swap;
         }
-
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
         body {
             background-color: #12141A;
             color: #FFFFFF;
-            font-family: 'AYNEHA', 'Courier New', monospace;
+            font-family: 'AYNEHA', sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -29,9 +26,7 @@
             min-height: 100vh;
             padding: 20px;
         }
-
         h1 { font-size: 1.5rem; margin-bottom: 20px; text-align: center; font-family: sans-serif; color: #A0AEC0; }
-
         .display-container {
             width: 100%;
             max-width: 400px;
@@ -41,21 +36,19 @@
             margin-bottom: 20px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
-
         #display {
             width: 100%;
             background: transparent;
             border: none;
             color: #FFFFFF;
             font-size: 3rem;
-            direction: rtl; /* Écriture de droite à gauche */
+            direction: rtl;
             text-align: right;
-            font-family: 'AYNEHA', 'Courier New', monospace;
+            font-family: 'AYNEHA', sans-serif;
             outline: none;
             overflow-x: auto;
             white-space: nowrap;
         }
-
         .keypad {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -63,14 +56,13 @@
             width: 100%;
             max-width: 400px;
         }
-
         .btn {
             background-color: #2D3748;
             color: #FFFFFF;
             border: none;
             border-radius: 12px;
             font-size: 1.8rem;
-            font-family: 'AYNEHA', 'Courier New', monospace;
+            font-family: 'AYNEHA', sans-serif;
             padding: 20px 0;
             cursor: pointer;
             transition: background-color 0.1s, transform 0.05s;
@@ -79,50 +71,45 @@
             align-items: center;
             justify-content: center;
         }
-
         .btn:active { background-color: #4A5568; transform: scale(0.95); }
         .btn.operator { background-color: #3182CE; }
         .btn.operator:active { background-color: #2B6CB0; }
         .btn.action { background-color: #E53E3E; }
         .btn.action:active { background-color: #C53030; }
         .btn.zero { grid-column: span 2; }
-
         .status { margin-top: 20px; font-size: 0.8rem; color: #48BB78; font-family: sans-serif; }
     </style>
 </head>
 <body>
-
     <h1>Calculatrice AYNEHA</h1>
-
     <div class="display-container">
         <input type="text" id="display" readonly value="">
     </div>
+    <div class="keypad">
+        <button class="btn action" onclick="clearDisplay()">C</button>
+        <button class="btn action" onclick="backspace()">⌫</button>
+        <button class="btn operator" onclick="appendOperator('%')">%</button>
+        <button class="btn operator" onclick="appendOperator('÷')">÷</button>
 
-<div class="keypad">
-    <button class="btn action" onclick="clearDisplay()">C</button>
-    <button class="btn action" onclick="backspace()">⌫</button>
-    <button class="btn operator" onclick="appendOperator('%')">%</button>
-    <button class="btn operator" onclick="appendOperator('÷')">÷</button>
+        <button class="btn" onclick="appendNumber('\uE007')">&#xE007;</button>
+        <button class="btn" onclick="appendNumber('\uE008')">&#xE008;</button>
+        <button class="btn" onclick="appendNumber('\uE009')">&#xE009;</button>
+        <button class="btn operator" onclick="appendOperator('×')">×</button>
 
-    <button class="btn" onclick="appendNumber('\uE007')">&#xE007;</button>
-    <button class="btn" onclick="appendNumber('\uE008')">&#xE008;</button>
-    <button class="btn" onclick="appendNumber('\uE009')">&#xE009;</button>
-    <button class="btn operator" onclick="appendOperator('×')">×</button>
+        <button class="btn" onclick="appendNumber('\uE004')">&#xE004;</button>
+        <button class="btn" onclick="appendNumber('\uE005')">&#xE005;</button>
+        <button class="btn" onclick="appendNumber('\uE006')">&#xE006;</button>
+        <button class="btn operator" onclick="appendOperator('-')">−</button>
 
-    <button class="btn" onclick="appendNumber('\uE004')">&#xE004;</button>
-    <button class="btn" onclick="appendNumber('\uE005')">&#xE005;</button>
-    <button class="btn" onclick="appendNumber('\uE006')">&#xE006;</button>
-    <button class="btn operator" onclick="appendOperator('-')">−</button>
+        <button class="btn" onclick="appendNumber('\uE001')">&#xE001;</button>
+        <button class="btn" onclick="appendNumber('\uE002')">&#xE002;</button>
+        <button class="btn" onclick="appendNumber('\uE003')">&#xE003;</button>
+        <button class="btn operator" onclick="appendOperator('+')">+</button>
 
-    <button class="btn" onclick="appendNumber('\uE001')">&#xE001;</button>
-    <button class="btn" onclick="appendNumber('\uE002')">&#xE002;</button>
-    <button class="btn" onclick="appendNumber('\uE003')">&#xE003;</button>
-    <button class="btn operator" onclick="appendOperator('+')">+</button>
-
-    <button class="btn zero" onclick="appendNumber('\uE000')">&#xE000;</button>
-    <button class="btn" onclick="appendDecimal()">,</button>
-    <button class="btn operator" onclick="calculate()">=</button>
-</div>
+        <button class="btn zero" onclick="appendNumber('\uE000')">&#xE000;</button>
+        <button class="btn" onclick="appendDecimal()">,</button>
+        <button class="btn operator" onclick="calculate()">=</button>
+    </div>
     <div class="status" id="status">Initialisation...</div>
 
     <script>
@@ -134,7 +121,6 @@
             '0': '\uE000', '1': '\uE001', '2': '\uE002', '3': '\uE003', '4': '\uE004',
             '5': '\uE005', '6': '\uE006', '7': '\uE007', '8': '\uE008', '9': '\uE009'
         };
-
         const display = document.getElementById('display');
         let currentExpression = '';
         let isDecimalAdded = false;
@@ -204,10 +190,8 @@
                 }
                 let resultStr = result.toString();
                 if (resultStr.includes('.')) resultStr = parseFloat(result.toFixed(8)).toString();
-                
                 let formattedResult = formatWithThousandsSeparator(resultStr);
                 formattedResult = formattedResult.replace(/[0-9]/g, match => standardToAyneha[match]);
-                
                 display.value = formattedResult;
                 currentExpression = resultStr;
                 isDecimalAdded = resultStr.includes('.');

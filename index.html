@@ -8,7 +8,6 @@
     <link rel="manifest" href="manifest.json">
     
     <style>
-        /* 1. EMBARQUEMENT DE LA POLICE AYNEHA */
         @font-face {
             font-family: 'AYNEHA';
             src: url('ayenha-chiffres.ttf') format('truetype');
@@ -17,13 +16,7 @@
             font-display: swap;
         }
 
-        /* 2. RESET & BASE */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            -webkit-tap-highlight-color: transparent;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
         body {
             background-color: #12141A;
@@ -37,15 +30,8 @@
             padding: 20px;
         }
 
-        h1 {
-            font-size: 1.5rem;
-            margin-bottom: 20px;
-            text-align: center;
-            font-family: sans-serif;
-            color: #A0AEC0;
-        }
+        h1 { font-size: 1.5rem; margin-bottom: 20px; text-align: center; font-family: sans-serif; color: #A0AEC0; }
 
-        /* 3. ÉCRAN D'AFFICHAGE (CORRECTION RTL & SÉPARATEUR) */
         .display-container {
             width: 100%;
             max-width: 400px;
@@ -62,8 +48,7 @@
             border: none;
             color: #FFFFFF;
             font-size: 3rem;
-            /* CORRECTION 3 : Force l'ordre des chiffres de gauche à droite pour l'affichage, mais aligne le tout à droite */
-            direction: ltr; 
+            direction: rtl; /* Écriture de droite à gauche */
             text-align: right;
             font-family: 'AYNEHA', 'Courier New', monospace;
             outline: none;
@@ -71,7 +56,6 @@
             white-space: nowrap;
         }
 
-        /* 4. GRILLE DU CLAVIER (CORRECTION PAVÉ NUMÉRIQUE) */
         .keypad {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -96,39 +80,14 @@
             justify-content: center;
         }
 
-        .btn:active {
-            background-color: #4A5568;
-            transform: scale(0.95);
-        }
+        .btn:active { background-color: #4A5568; transform: scale(0.95); }
+        .btn.operator { background-color: #3182CE; }
+        .btn.operator:active { background-color: #2B6CB0; }
+        .btn.action { background-color: #E53E3E; }
+        .btn.action:active { background-color: #C53030; }
+        .btn.zero { grid-column: span 2; }
 
-        .btn.operator {
-            background-color: #3182CE;
-            color: #FFFFFF;
-        }
-
-        .btn.operator:active {
-            background-color: #2B6CB0;
-        }
-
-        .btn.action {
-            background-color: #E53E3E;
-            color: #FFFFFF;
-        }
-
-        .btn.action:active {
-            background-color: #C53030;
-        }
-
-        .btn.zero {
-            grid-column: span 2;
-        }
-
-        .status {
-            margin-top: 20px;
-            font-size: 0.8rem;
-            color: #48BB78;
-            font-family: sans-serif;
-        }
+        .status { margin-top: 20px; font-size: 0.8rem; color: #48BB78; font-family: sans-serif; }
     </style>
 </head>
 <body>
@@ -140,31 +99,26 @@
     </div>
 
     <div class="keypad">
-        <!-- Rangée 1 -->
         <button class="btn action" onclick="clearDisplay()">C</button>
-        <button class="btn action" onclick="backspace()">⌫</button>
+        <button class="btn action" onclick="backspace()"></button>
         <button class="btn operator" onclick="appendOperator('%')">%</button>
         <button class="btn operator" onclick="appendOperator('÷')">÷</button>
 
-        <!-- Rangée 2 -->
         <button class="btn" onclick="appendNumber('\uE007')">7</button>
         <button class="btn" onclick="appendNumber('\uE008')">8</button>
         <button class="btn" onclick="appendNumber('\uE009')">9</button>
         <button class="btn operator" onclick="appendOperator('×')">×</button>
 
-        <!-- Rangée 3 -->
         <button class="btn" onclick="appendNumber('\uE004')">4</button>
         <button class="btn" onclick="appendNumber('\uE005')">5</button>
         <button class="btn" onclick="appendNumber('\uE006')">6</button>
         <button class="btn operator" onclick="appendOperator('-')">−</button>
 
-        <!-- Rangée 4 -->
         <button class="btn" onclick="appendNumber('\uE001')">1</button>
         <button class="btn" onclick="appendNumber('\uE002')">2</button>
         <button class="btn" onclick="appendNumber('\uE003')">3</button>
         <button class="btn operator" onclick="appendOperator('+')">+</button>
 
-        <!-- Rangée 5 -->
         <button class="btn zero" onclick="appendNumber('\uE000')">0</button>
         <button class="btn" onclick="appendDecimal()">,</button>
         <button class="btn operator" onclick="calculate()">=</button>
@@ -173,12 +127,10 @@
     <div class="status" id="status">Initialisation...</div>
 
     <script>
-        // --- 1. MAPPINGS ---
         const aynehaToStandard = {
             '\uE000': '0', '\uE001': '1', '\uE002': '2', '\uE003': '3', '\uE004': '4',
             '\uE005': '5', '\uE006': '6', '\uE007': '7', '\uE008': '8', '\uE009': '9'
         };
-
         const standardToAyneha = {
             '0': '\uE000', '1': '\uE001', '2': '\uE002', '3': '\uE003', '4': '\uE004',
             '5': '\uE005', '6': '\uE006', '7': '\uE007', '8': '\uE008', '9': '\uE009'
@@ -188,31 +140,23 @@
         let currentExpression = '';
         let isDecimalAdded = false;
 
-        // --- 2. CORRECTION 1 : SÉPARATEUR DE MILLIERS ---
         function formatWithThousandsSeparator(numberStr) {
             const parts = numberStr.split('.');
             const integerPart = parts[0];
             const decimalPart = parts.length > 1 ? parts[1] : '';
-            
-            // Ajoute une espace insécable tous les 3 chiffres
             const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '\u00A0');
-            
             return decimalPart ? formattedInteger + ',' + decimalPart : formattedInteger;
         }
 
-        // --- 3. FONCTIONS D'AFFICHAGE ---
         function updateDisplay() {
-            // Formate d'abord avec le séparateur de milliers
             let formattedStandard = formatWithThousandsSeparator(currentExpression);
-            // Convertit ensuite en chiffres AYNEHA
             let aynehaDisplay = formattedStandard.replace(/[0-9]/g, match => standardToAyneha[match]);
             display.value = aynehaDisplay;
         }
 
         function appendNumber(aynehaChar) {
             isDecimalAdded = false;
-            const standardChar = aynehaToStandard[aynehaChar];
-            currentExpression += standardChar;
+            currentExpression += aynehaToStandard[aynehaChar];
             updateDisplay();
         }
 
@@ -221,7 +165,6 @@
             const parts = currentExpression.split(/[\+\-\×\÷\%]/);
             const lastPart = parts[parts.length - 1];
             if (lastPart.includes('.')) return;
-            
             currentExpression += '.';
             isDecimalAdded = true;
             updateDisplay();
@@ -233,13 +176,11 @@
             if (['+', '-', '×', '÷', '%'].includes(lastChar)) {
                 currentExpression = currentExpression.slice(0, -1);
             }
-            
             const jsOp = op === '×' ? '*' : (op === '÷' ? '/' : op);
             currentExpression += jsOp;
             updateDisplay();
         }
 
-        // --- 4. CONTRÔLES ---
         function clearDisplay() {
             currentExpression = '';
             isDecimalAdded = false;
@@ -252,7 +193,6 @@
             updateDisplay();
         }
 
-        // --- 5. MOTEUR DE CALCUL ---
         function calculate() {
             if (currentExpression === '') return;
             try {
@@ -263,19 +203,15 @@
                     isDecimalAdded = false;
                     return;
                 }
-
                 let resultStr = result.toString();
-                if (resultStr.includes('.')) {
-                    resultStr = parseFloat(result.toFixed(8)).toString();
-                }
-
+                if (resultStr.includes('.')) resultStr = parseFloat(result.toFixed(8)).toString();
+                
                 let formattedResult = formatWithThousandsSeparator(resultStr);
                 formattedResult = formattedResult.replace(/[0-9]/g, match => standardToAyneha[match]);
                 
                 display.value = formattedResult;
                 currentExpression = resultStr;
                 isDecimalAdded = resultStr.includes('.');
-
             } catch (error) {
                 display.value = "Erreur";
                 currentExpression = '';
@@ -283,7 +219,6 @@
             }
         }
 
-        // --- 6. VÉRIFICATION POLICE ---
         document.fonts.ready.then(() => {
             if (document.fonts.check('1em AYNEHA')) {
                 document.getElementById('status').innerText = '✓ Police AYNEHA chargée • RTL & Milliers actifs';
@@ -294,7 +229,6 @@
             }
         });
 
-        // --- 7. SERVICE WORKER ---
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js').catch(err => console.log(err));

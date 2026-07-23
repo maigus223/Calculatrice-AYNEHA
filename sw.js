@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ayneha-calc-v7.7';
+const CACHE_NAME = 'ayneha-calc-v8.8';
 const CORE_ASSETS = ['./', './index.html', './manifest.json', './ayenha-chiffres.ttf', './icons/icon-192.png', './icons/icon-512.png'];
 
 self.addEventListener('install', (event) => {

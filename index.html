@@ -15,7 +15,6 @@
             font-display: swap;
         }
 
-        /* FORÇAGE RTL GLOBAL */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -27,7 +26,7 @@
             background-color: #12141A;
             color: #FFFFFF;
             font-family: 'AYNEHA', sans-serif;
-            direction: rtl; /* Force le flux global de droite à gauche */
+            direction: rtl;
             text-align: right;
             display: flex;
             flex-direction: column;
@@ -37,11 +36,32 @@
             padding: 20px;
         }
 
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .eyebrow {
+            font-family: sans-serif;
+            font-size: 0.8rem;
+            color: #3182CE;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
         h1 {
             font-size: 1.5rem;
-            margin-bottom: 20px;
-            text-align: center;
+            color: #FFFFFF;
             font-family: sans-serif;
+            margin-bottom: 5px;
+        }
+
+        header p {
+            font-family: sans-serif;
+            font-size: 0.85rem;
             color: #A0AEC0;
         }
 
@@ -55,30 +75,28 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
 
-        /* FORÇAGE RTL SUR L'ÉCRAN D'AFFICHAGE */
         #display {
             width: 100%;
             background: transparent;
             border: none;
             color: #FFFFFF;
             font-size: 3rem;
-            direction: rtl; /* Force l'écriture de droite à gauche */
+            direction: rtl;
             text-align: right;
-            unicode-bidi: bidi-override; /* Empêche le navigateur de réorganiser les chiffres */
+            unicode-bidi: bidi-override;
             font-family: 'AYNEHA', sans-serif;
             outline: none;
             overflow-x: auto;
             white-space: nowrap;
         }
 
-        /* FORÇAGE RTL SUR LE CLAVIER */
         .keypad {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 12px;
             width: 100%;
             max-width: 400px;
-            direction: rtl; /* Force la grille à s'organiser de droite à gauche */
+            direction: rtl;
         }
 
         .btn {
@@ -104,16 +122,38 @@
         .btn.action:active { background-color: #C53030; }
         .btn.zero { grid-column: span 2; }
 
-        .status { margin-top: 20px; font-size: 0.8rem; color: #48BB78; font-family: sans-serif; }
+        .status {
+            margin-top: 20px;
+            font-size: 0.8rem;
+            color: #48BB78;
+            font-family: sans-serif;
+            text-align: center;
+        }
+
+        footer {
+            margin-top: 30px;
+            font-family: sans-serif;
+            font-size: 0.7rem;
+            color: #718096;
+            text-align: center;
+            letter-spacing: 1px;
+            line-height: 1.5;
+        }
     </style>
 </head>
 <body>
-    <h1>Calculatrice AYNEHA</h1>
+
+    <header>
+        <div class="eyebrow">Alphabet Songhay</div>
+        <h1>Calculatrice AYNEHA</h1>
+        <p>Affichage et saisie de droite-à-gauche (RTL).<br></p>
+    </header>
+
     <div class="display-container">
         <input type="text" id="display" readonly value="" dir="rtl">
     </div>
+
     <div class="keypad">
-        <!-- Les boutons sont ordonnés pour le flux RTL -->
         <button class="btn action" onclick="clearDisplay()">C</button>
         <button class="btn action" onclick="backspace()">⌫</button>
         <button class="btn operator" onclick="appendOperator('%')">%</button>
@@ -135,14 +175,28 @@
         <button class="btn operator" onclick="appendOperator('+')">+</button>
 
         <button class="btn zero" onclick="appendNumber('\uE000')">&#xE000;</button>
-        <button class="btn" onclick="appendDecimal()">,</button>
+        <button class="btn" onclick="appendDecimal()">.</button>
         <button class="btn operator" onclick="calculate()">=</button>
     </div>
-    <div class="status" id="status">Système RTL actif</div>
+
+    <div class="status" id="status">Système RTL actif • Point décimal</div>
+
+    <footer>
+        FICHIER AUTONOME — ESSAI & ADAPTATION.<br>
+        OFFICIALISATION EN COURS...
+    </footer>
 
     <script>
         let currentExpression = '';
         const display = document.getElementById('display');
+
+        function formatWithThousandsSeparator(numberStr) {
+            const parts = numberStr.split('.');
+            const integerPart = parts[0];
+            const decimalPart = parts.length > 1 ? parts[1] : '';
+            const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '\u00A0');
+            return decimalPart ? formattedInteger + '.' + decimalPart : formattedInteger;
+        }
 
         function updateDisplay() {
             display.value = currentExpression;
@@ -159,7 +213,7 @@
         }
 
         function appendDecimal() {
-            currentExpression += ',';
+            currentExpression += '.';
             updateDisplay();
         }
 
@@ -176,22 +230,22 @@
         function calculate() {
             if (currentExpression === '') return;
             
-            // Conversion des chiffres AYNEHA (PUA) en chiffres standards pour le calcul
             let evalString = currentExpression
                 .replace(/\uE000/g, '0').replace(/\uE001/g, '1').replace(/\uE002/g, '2')
                 .replace(/\uE003/g, '3').replace(/\uE004/g, '4').replace(/\uE005/g, '5')
                 .replace(/\uE006/g, '6').replace(/\uE007/g, '7').replace(/\uE008/g, '8')
                 .replace(/\uE009/g, '9')
-                .replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-').replace(/,/g, '.');
+                .replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-')
+                .replace(/\u00A0/g, '');
             
             try {
                 let result = new Function('return ' + evalString)();
                 if (!isFinite(result) || isNaN(result)) throw new Error('Invalid');
                 
-                let resultStr = result.toString().replace('.', ',');
+                let resultStr = result.toString();
+                let formattedResult = formatWithThousandsSeparator(resultStr);
                 
-                // Conversion du résultat en chiffres AYNEHA
-                let aynehaResult = resultStr
+                let aynehaResult = formattedResult
                     .replace(/0/g, '\uE000').replace(/1/g, '\uE001').replace(/2/g, '\uE002')
                     .replace(/3/g, '\uE003').replace(/4/g, '\uE004').replace(/5/g, '\uE005')
                     .replace(/6/g, '\uE006').replace(/7/g, '\uE007').replace(/8/g, '\uE008')
@@ -207,7 +261,7 @@
 
         document.fonts.ready.then(() => {
             if (document.fonts.check('1em AYNEHA')) {
-                document.getElementById('status').innerText = '✓ Police AYNEHA chargée • RTL forcé';
+                document.getElementById('status').innerText = '✓ Police AYNEHA chargée • RTL forcé • Point décimal';
                 document.getElementById('status').style.color = '#48BB78';
             }
         });

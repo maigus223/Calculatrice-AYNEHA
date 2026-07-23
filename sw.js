@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ayneha-calc-v2';
+const CACHE_NAME = 'ayneha-calc-v4.0';
 const CORE_ASSETS = [
     './',
     './index.html',

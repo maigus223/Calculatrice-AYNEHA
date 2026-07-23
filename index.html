@@ -45,7 +45,7 @@
             color: #A0AEC0;
         }
 
-        /* 3. ÉCRAN D'AFFICHAGE (RTL STRICT) */
+        /* 3. ÉCRAN D'AFFICHAGE (CORRECTION RTL & SÉPARATEUR) */
         .display-container {
             width: 100%;
             max-width: 400px;
@@ -62,15 +62,16 @@
             border: none;
             color: #FFFFFF;
             font-size: 3rem;
+            /* CORRECTION 3 : Force l'ordre des chiffres de gauche à droite pour l'affichage, mais aligne le tout à droite */
+            direction: ltr; 
             text-align: right;
-            direction: rtl;
             font-family: 'AYNEHA', 'Courier New', monospace;
             outline: none;
             overflow-x: auto;
             white-space: nowrap;
         }
 
-        /* 4. GRILLE DU CLAVIER (Responsive & Tactile) */
+        /* 4. GRILLE DU CLAVIER (CORRECTION PAVÉ NUMÉRIQUE) */
         .keypad {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -122,7 +123,6 @@
             grid-column: span 2;
         }
 
-        /* Indicateur de statut */
         .status {
             margin-top: 20px;
             font-size: 0.8rem;
@@ -136,44 +136,44 @@
     <h1>Calculatrice AYNEHA</h1>
 
     <div class="display-container">
-        <input type="text" id="display" dir="rtl" readonly value="">
+        <input type="text" id="display" readonly value="">
     </div>
 
-<div class="keypad">
-    <!-- Rangée 1 -->
-    <button class="btn action" onclick="clearDisplay()">C</button>
-    <button class="btn action" onclick="backspace()">⌫</button>
-    <button class="btn operator" onclick="appendOperator('%')">%</button>
-    <button class="btn operator" onclick="appendOperator('÷')">÷</button>
+    <div class="keypad">
+        <!-- Rangée 1 -->
+        <button class="btn action" onclick="clearDisplay()">C</button>
+        <button class="btn action" onclick="backspace()">⌫</button>
+        <button class="btn operator" onclick="appendOperator('%')">%</button>
+        <button class="btn operator" onclick="appendOperator('÷')">÷</button>
 
-    <!-- Rangée 2 -->
-    <button class="btn" onclick="appendNumber('\uE007')">7</button>
-    <button class="btn" onclick="appendNumber('\uE008')">8</button>
-    <button class="btn" onclick="appendNumber('\uE009')">9</button>
-    <button class="btn operator" onclick="appendOperator('×')">×</button>
+        <!-- Rangée 2 -->
+        <button class="btn" onclick="appendNumber('\uE007')">7</button>
+        <button class="btn" onclick="appendNumber('\uE008')">8</button>
+        <button class="btn" onclick="appendNumber('\uE009')">9</button>
+        <button class="btn operator" onclick="appendOperator('×')">×</button>
 
-    <!-- Rangée 3 -->
-    <button class="btn" onclick="appendNumber('\uE004')">4</button>
-    <button class="btn" onclick="appendNumber('\uE005')">5</button>
-    <button class="btn" onclick="appendNumber('\uE006')">6</button>
-    <button class="btn operator" onclick="appendOperator('-')">−</button>
+        <!-- Rangée 3 -->
+        <button class="btn" onclick="appendNumber('\uE004')">4</button>
+        <button class="btn" onclick="appendNumber('\uE005')">5</button>
+        <button class="btn" onclick="appendNumber('\uE006')">6</button>
+        <button class="btn operator" onclick="appendOperator('-')">−</button>
 
-    <!-- Rangée 4 -->
-    <button class="btn" onclick="appendNumber('\uE001')">1</button>
-    <button class="btn" onclick="appendNumber('\uE002')">2</button>
-    <button class="btn" onclick="appendNumber('\uE003')">3</button>
-    <button class="btn operator" onclick="appendOperator('+')">+</button>
+        <!-- Rangée 4 -->
+        <button class="btn" onclick="appendNumber('\uE001')">1</button>
+        <button class="btn" onclick="appendNumber('\uE002')">2</button>
+        <button class="btn" onclick="appendNumber('\uE003')">3</button>
+        <button class="btn operator" onclick="appendOperator('+')">+</button>
 
-    <!-- Rangée 5 -->
-    <button class="btn zero" onclick="appendNumber('\uE000')">0</button>
-    <button class="btn" onclick="appendDecimal()">,</button>
-    <button class="btn operator" onclick="calculate()">=</button>
-</div>
+        <!-- Rangée 5 -->
+        <button class="btn zero" onclick="appendNumber('\uE000')">0</button>
+        <button class="btn" onclick="appendDecimal()">,</button>
+        <button class="btn operator" onclick="calculate()">=</button>
+    </div>
 
-    <div class="status" id="status">RTL actif • Police AYNEHA chargée</div>
+    <div class="status" id="status">Initialisation...</div>
 
     <script>
-        // --- 1. CONFIGURATION DES MAPPINGS ---
+        // --- 1. MAPPINGS ---
         const aynehaToStandard = {
             '\uE000': '0', '\uE001': '1', '\uE002': '2', '\uE003': '3', '\uE004': '4',
             '\uE005': '5', '\uE006': '6', '\uE007': '7', '\uE008': '8', '\uE009': '9'
@@ -186,23 +186,44 @@
 
         const display = document.getElementById('display');
         let currentExpression = '';
+        let isDecimalAdded = false;
 
-        // --- 2. FONCTIONS D'AFFICHAGE ---
+        // --- 2. CORRECTION 1 : SÉPARATEUR DE MILLIERS ---
+        function formatWithThousandsSeparator(numberStr) {
+            const parts = numberStr.split('.');
+            const integerPart = parts[0];
+            const decimalPart = parts.length > 1 ? parts[1] : '';
+            
+            // Ajoute une espace insécable tous les 3 chiffres
+            const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '\u00A0');
+            
+            return decimalPart ? formattedInteger + ',' + decimalPart : formattedInteger;
+        }
+
+        // --- 3. FONCTIONS D'AFFICHAGE ---
         function updateDisplay() {
-            let aynehaDisplay = currentExpression.replace(/[0-9]/g, match => standardToAyneha[match]);
+            // Formate d'abord avec le séparateur de milliers
+            let formattedStandard = formatWithThousandsSeparator(currentExpression);
+            // Convertit ensuite en chiffres AYNEHA
+            let aynehaDisplay = formattedStandard.replace(/[0-9]/g, match => standardToAyneha[match]);
             display.value = aynehaDisplay;
         }
 
         function appendNumber(aynehaChar) {
-            if (aynehaChar === '.') {
-                const parts = currentExpression.split(/[\+\-\×\÷\%]/);
-                const lastPart = parts[parts.length - 1];
-                if (lastPart.includes('.')) return;
-                currentExpression += '.';
-            } else {
-                const standardChar = aynehaToStandard[aynehaChar];
-                currentExpression += standardChar;
-            }
+            isDecimalAdded = false;
+            const standardChar = aynehaToStandard[aynehaChar];
+            currentExpression += standardChar;
+            updateDisplay();
+        }
+
+        function appendDecimal() {
+            if (isDecimalAdded) return;
+            const parts = currentExpression.split(/[\+\-\×\÷\%]/);
+            const lastPart = parts[parts.length - 1];
+            if (lastPart.includes('.')) return;
+            
+            currentExpression += '.';
+            isDecimalAdded = true;
             updateDisplay();
         }
 
@@ -218,68 +239,65 @@
             updateDisplay();
         }
 
-        // --- 3. FONCTIONS DE CONTRÔLE ---
+        // --- 4. CONTRÔLES ---
         function clearDisplay() {
             currentExpression = '';
+            isDecimalAdded = false;
             display.value = '';
         }
 
         function backspace() {
+            if (currentExpression.endsWith('.')) isDecimalAdded = false;
             currentExpression = currentExpression.slice(0, -1);
             updateDisplay();
         }
 
-        // --- 4. MOTEUR DE CALCUL ---
+        // --- 5. MOTEUR DE CALCUL ---
         function calculate() {
             if (currentExpression === '') return;
-            
             try {
                 const result = new Function('return ' + currentExpression)();
-                
                 if (!isFinite(result) || isNaN(result)) {
                     display.value = "Erreur";
                     currentExpression = '';
+                    isDecimalAdded = false;
                     return;
                 }
 
                 let resultStr = result.toString();
-                
                 if (resultStr.includes('.')) {
                     resultStr = parseFloat(result.toFixed(8)).toString();
                 }
 
-                currentExpression = resultStr.replace(/[0-9]/g, match => standardToAyneha[match]);
-                display.value = currentExpression;
+                let formattedResult = formatWithThousandsSeparator(resultStr);
+                formattedResult = formattedResult.replace(/[0-9]/g, match => standardToAyneha[match]);
                 
-                let tempStandard = '';
-                for (let char of currentExpression) {
-                    tempStandard += aynehaToStandard[char] !== undefined ? aynehaToStandard[char] : char;
-                }
-                currentExpression = tempStandard;
+                display.value = formattedResult;
+                currentExpression = resultStr;
+                isDecimalAdded = resultStr.includes('.');
 
             } catch (error) {
                 display.value = "Erreur";
                 currentExpression = '';
+                isDecimalAdded = false;
             }
         }
 
-        // --- 5. VÉRIFICATION DU CHARGEMENT DE LA POLICE ---
+        // --- 6. VÉRIFICATION POLICE ---
         document.fonts.ready.then(() => {
             if (document.fonts.check('1em AYNEHA')) {
-                document.getElementById('status').innerText = '✓ RTL actif • Police AYNEHA chargée avec succès';
+                document.getElementById('status').innerText = '✓ Police AYNEHA chargée • RTL & Milliers actifs';
                 document.getElementById('status').style.color = '#48BB78';
             } else {
-                document.getElementById('status').innerText = '⚠ Police AYNEHA non détectée. Vérifie le chemin du fichier .ttf';
+                document.getElementById('status').innerText = '⚠ Police AYNEHA non détectée.';
                 document.getElementById('status').style.color = '#ECC94B';
             }
         });
 
-        // --- 6. ENREGISTREMENT DU SERVICE WORKER (PWA) ---
+        // --- 7. SERVICE WORKER ---
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js')
-                    .then(reg => console.log('Service Worker registered', reg))
-                    .catch(err => console.log('Service Worker registration failed', err));
+                navigator.serviceWorker.register('sw.js').catch(err => console.log(err));
             });
         }
     </script>

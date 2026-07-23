@@ -98,32 +98,31 @@
         <input type="text" id="display" readonly value="">
     </div>
 
-    <div class="keypad">
-        <button class="btn action" onclick="clearDisplay()">C</button>
-        <button class="btn action" onclick="backspace()"></button>
-        <button class="btn operator" onclick="appendOperator('%')">%</button>
-        <button class="btn operator" onclick="appendOperator('÷')">÷</button>
+<div class="keypad">
+    <button class="btn action" onclick="clearDisplay()">C</button>
+    <button class="btn action" onclick="backspace()">⌫</button>
+    <button class="btn operator" onclick="appendOperator('%')">%</button>
+    <button class="btn operator" onclick="appendOperator('÷')">÷</button>
 
-        <button class="btn" onclick="appendNumber('\uE007')">7</button>
-        <button class="btn" onclick="appendNumber('\uE008')">8</button>
-        <button class="btn" onclick="appendNumber('\uE009')">9</button>
-        <button class="btn operator" onclick="appendOperator('×')">×</button>
+    <button class="btn" onclick="appendNumber('\uE007')">&#xE007;</button>
+    <button class="btn" onclick="appendNumber('\uE008')">&#xE008;</button>
+    <button class="btn" onclick="appendNumber('\uE009')">&#xE009;</button>
+    <button class="btn operator" onclick="appendOperator('×')">×</button>
 
-        <button class="btn" onclick="appendNumber('\uE004')">4</button>
-        <button class="btn" onclick="appendNumber('\uE005')">5</button>
-        <button class="btn" onclick="appendNumber('\uE006')">6</button>
-        <button class="btn operator" onclick="appendOperator('-')">−</button>
+    <button class="btn" onclick="appendNumber('\uE004')">&#xE004;</button>
+    <button class="btn" onclick="appendNumber('\uE005')">&#xE005;</button>
+    <button class="btn" onclick="appendNumber('\uE006')">&#xE006;</button>
+    <button class="btn operator" onclick="appendOperator('-')">−</button>
 
-        <button class="btn" onclick="appendNumber('\uE001')">1</button>
-        <button class="btn" onclick="appendNumber('\uE002')">2</button>
-        <button class="btn" onclick="appendNumber('\uE003')">3</button>
-        <button class="btn operator" onclick="appendOperator('+')">+</button>
+    <button class="btn" onclick="appendNumber('\uE001')">&#xE001;</button>
+    <button class="btn" onclick="appendNumber('\uE002')">&#xE002;</button>
+    <button class="btn" onclick="appendNumber('\uE003')">&#xE003;</button>
+    <button class="btn operator" onclick="appendOperator('+')">+</button>
 
-        <button class="btn zero" onclick="appendNumber('\uE000')">0</button>
-        <button class="btn" onclick="appendDecimal()">,</button>
-        <button class="btn operator" onclick="calculate()">=</button>
-    </div>
-
+    <button class="btn zero" onclick="appendNumber('\uE000')">&#xE000;</button>
+    <button class="btn" onclick="appendDecimal()">,</button>
+    <button class="btn operator" onclick="calculate()">=</button>
+</div>
     <div class="status" id="status">Initialisation...</div>
 
     <script>

@@ -90,7 +90,7 @@
   .main-line .u{ font-size: 54px; line-height:1; color: var(--screen-text); }
   .main-line img{ height: 56px; width:auto; mix-blend-mode: multiply; }
   .u.sep{ color: var(--clay); font-size: 0.18em; align-self: center; margin: 0 2px; }
-  .u.dec{ display:inline-block; transform: scaleX(-1); color: var(--clay); margin: 0 -3px; }
+  .u.dec{ display:inline-block; transform: scaleX(-1); color: var(--clay); margin: 0 -1.5px; }
   .rtl-tag{
     display:inline-block; margin-top:10px; font-size: 10px; letter-spacing: .14em;
     text-transform: uppercase; color: var(--river-dim);
@@ -129,6 +129,8 @@
   }
   button.key.equals:active{ box-shadow: 0 1px 0 #7A5726; }
   button.key.clear{ color: var(--clay); border-color: rgba(193,80,46,0.4); }
+  button.key.back-rtl{ transform: scaleX(-1); }
+  button.key.back-rtl:active{ transform: scaleX(-1) scale(0.95); }
 
   footer{ text-align:center; font-size: 11px; color: var(--text-muted); margin-top: 26px; line-height:1.7; }
 </style>
@@ -196,7 +198,7 @@
         span.textContent = '\u00B7'; // point médian — repère visuel du groupement de 3
       } else if(ch === '.'){
         span.className = unitClass + ' dec';
-        span.textContent = ',';
+        span.textContent = '.';
       } else {
         span.className = unitClass;
         span.textContent = (ch === '-' ? '−' : ch);
@@ -282,7 +284,7 @@
   // --- build keypad ---
   const keypad = document.getElementById('keypad');
   const layout = [
-    ['C','clear'], ['⌫','back'], [',','dec'], ['÷','op'],
+    ['C','clear'], ['⌫','back'], ['.','dec'], ['÷','op'],
     ['9','d'], ['8','d'], ['7','d'], ['×','op'],
     ['6','d'], ['5','d'], ['4','d'], ['−','op'],
     ['3','d'], ['2','d'], ['1','d'], ['+','op'],
@@ -292,8 +294,8 @@
     const btn = document.createElement('button');
     btn.className = 'key';
     if(type==='clear'){ btn.classList.add('clear'); btn.textContent='C'; btn.onclick=()=>{pressClear(); render();}; }
-    else if(type==='back'){ btn.textContent='⌫'; btn.onclick=()=>{pressBackspace(); render();}; }
-    else if(type==='dec'){ btn.classList.add('op'); btn.textContent=','; btn.onclick=()=>{pressDecimal(); render();}; }
+    else if(type==='back'){ btn.classList.add('back-rtl'); btn.textContent='⌫'; btn.onclick=()=>{pressBackspace(); render();}; }
+    else if(type==='dec'){ btn.classList.add('op'); btn.textContent='.'; btn.onclick=()=>{pressDecimal(); render();}; }
     else if(type==='op'){ btn.classList.add('op'); btn.textContent=label; btn.onclick=()=>{pressOperator(label); render();}; }
     else if(type==='eq'){ btn.classList.add('equals'); btn.textContent='='; btn.style.gridColumn='span 2'; btn.onclick=()=>{pressEquals(); render();}; }
     else if(type==='d'){

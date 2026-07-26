@@ -90,7 +90,7 @@
   .main-line .u{ font-size: 54px; line-height:1; color: var(--screen-text); }
   .main-line img{ height: 56px; width:auto; mix-blend-mode: multiply; }
   .u.sep{ color: var(--clay); font-size: 0.18em; align-self: center; margin: 0 2px; }
-  .u.dec{ display:inline-block; transform: scaleX(-1); color: var(--clay); margin: 0 -1.5px; }
+  .u.dec{ display:inline-block; align-self:flex-end; width:6px; height:6px; border-radius:50%; background: var(--clay); margin: 0 0 10px 0; }
   .rtl-tag{
     display:inline-block; margin-top:10px; font-size: 10px; letter-spacing: .14em;
     text-transform: uppercase; color: var(--river-dim);
@@ -198,7 +198,7 @@
         span.textContent = '\u00B7'; // point médian — repère visuel du groupement de 3
       } else if(ch === '.'){
         span.className = unitClass + ' dec';
-        span.textContent = '.';
+        span.textContent = '';
       } else {
         span.className = unitClass;
         span.textContent = (ch === '-' ? '−' : ch);

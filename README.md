@@ -1,45 +1,25 @@
-# 🧮 Calculatrice Web AYNEHA
+# Calculatrice AYNEHA
 
-[![Web App](https://img.shields.io/badge/Platform-Web%20App-blue.svg)](#)
-[![JavaScript](https://img.shields.io/badge/Language-JavaScript%20%2F%20HTML5-yellow.svg)](#)
-[![CSS3](https://img.shields.io/badge/Styling-CSS3%20%2F%20Flexbox-blue.svg)](#)
-[![Direction-RTL](https://img.shields.io/badge/Directionality-Right--to--Left%20(RTL)-orange.svg)](#)
-[![License](https://img.shields.io/badge/License-Copyright%20MAIGUS-blue.svg)](#)
+Calculatrice web avec **chiffres AYNEHA** et saisie/affichage de droite à gauche (RTL). Une démonstration de l'alphabet « en action ».
 
-Une application web interactive de calcul mathématique nativement intégrée au **système d'écriture AYNEHA**. Elle prend en charge la numération décimale **Right-to-Left (RTL)** et le rendu typographique de la langue **Soŋay**.
+*Web calculator using AYNEHA digits with right-to-left input and display.*
 
----
+**En ligne / Live : https://maigus223.github.io/Calculatrice-AYNEHA/**
 
-## 🌟 Présentation
+## Notes
+- Le « carré vide » affiché pour le chiffre 0 n'est pas un bug : le zéro AYNEHA est dessiné comme un rectangle.
+- Fichier autonome (HTML/CSS/JS), sans dépendance.
+- Une version Android existe séparément.
 
-La **Calculatrice Web AYNEHA** permet d'exécuter des opérations arithmétiques directement dans le navigateur en utilisant la plage de chiffres RTL d'AYNEHA (`U+E000` à `U+E009`). L'interface s'appuie sur la police web vectorielle `@font-face` pour afficher dynamiquement les chiffres et symboles du registre calculatoire.
+## Contribuer
+Signalez un bug ou une amélioration via les *Issues*.
 
-### Key Features / Fonctionnalités Clés
-* **Interface Web Responsive** : S'adapte parfaitement aux écrans mobiles, tablettes et ordinateurs.
-* **Affichage RTL Dynamique** : Alignement à droite des opérandes, résultats et historique d'affichage.
-* **Intégration Typographique Web** : Chargement direct du fichier de police `Ayneha-Regular.ttf` / `woff2`.
-* **Saisie Clavier & Tactile** : Prise en charge des clics sur les boutons interactifs et raccourcis clavier.
+## Licence / License
 
----
+- **Code** : GNU GPL v3.0 ou ultérieure (voir [LICENSE](LICENSE)). Vous pouvez utiliser, étudier, modifier et partager ce code, à condition que toute version dérivée que vous distribuez reste libre sous la même licence. / Code: GNU GPL v3.0 or later. Derived versions you distribute must remain free under the same license.
+- **Police AYNEHA (Ayneha Type)** : SIL Open Font License 1.1 (fichier `OFL.txt` à conserver avec la police). / Font: SIL OFL 1.1.
+- **Nom « AYNEHA », logos et identité visuelle** : non couverts par la GPL ; me contacter avant tout usage commercial ou en tant que marque. / The AYNEHA name, logos and visual identity are not covered by the GPL.
 
-## 📐 Spécifications Typographiques (Unicode PUA)
-
-L'application s'appuie sur la **Matrice Officielle AYNEHA** :
-
-| Catégorie | Plage Unicode PUA | Description |
-| :--- | :--- | :--- |
-| **Chiffres Décimaux RTL** | `U+E000` à `U+E009` | Chiffres 0 à 9 conçus pour la numération et le calcul RTL. |
-| **Directionalité** | `Right-to-Left` (RTL) | Flux applicatif et saisie calculatoire de droite à gauche (`dir="rtl"`). |
-| **Font-Face Web** | `Ayneha-Regular.ttf` | Police vectorielle chargée via CSS (`@font-face`). |
-
----
-
-## 📁 Structure du Projet
-
-```text
-Calculatrice-AYNEHA/
-├── index.html          # Structure HTML5 (avec attribut dir="rtl")
-├── style.css           # Feuilles de style, layout responsive & @font-face
-├── script.js           # Logique de calcul et gestion des entrées PUA
-└── fonts/
-    └── Ayneha-Regular.ttf # Police vectorielle AYNEHA
+**Concepteur et créateur : Mahamadou Issiaka MAIGA (MAIGUS)**
+Contact : gwokmt2q@duck.com
+Site officiel : https://ayneha-songhay.github.io/ · Omniglot : https://www.omniglot.com/conscripts/ayneha.htm

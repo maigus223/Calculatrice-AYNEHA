@@ -46,7 +46,9 @@
     padding:16px 16px 12px; margin-bottom:14px; box-shadow:inset 0 2px 8px rgba(19,33,58,.18); }
   .seq{ display:flex; flex-direction:row-reverse; align-items:center; flex-wrap:nowrap; overflow:hidden; gap:.08em; justify-content:flex-start; }
   .expr-line{ min-height:28px; font-size:24px; color:var(--ecran-doux); }
+  .result-line{ min-height:28px; margin-top:2px; font-size:24px; color:var(--orange-fonce); }
   .main-line{ min-height:66px; margin-top:4px; font-size:56px; color:var(--ecran-texte); }
+  .seq{ width:100%; }
   .u{ font-family:"Ayneha Pro", sans-serif; line-height:1; }
   .u.op{ font-family:system-ui,sans-serif; font-weight:600; color:var(--orange-fonce); padding:0 .12em; }
   /* Séparateur de milliers : petit point orange bien visible, à mi-hauteur. */
@@ -92,8 +94,9 @@
 
   <div class="card">
     <div class="display" aria-live="polite">
-      <div class="expr-line seq" id="exprLine"></div>
-      <div class="main-line seq" id="mainLine"></div>
+      <div class="expr-line seq" id="exprLine" data-taille="24"></div>
+      <div class="result-line seq" id="resultLine" data-taille="24"></div>
+      <div class="main-line seq" id="mainLine" data-taille="56"></div>
       <span class="tag">Droite à gauche</span>
     </div>
     <div class="keypad" id="keypad"></div>
@@ -151,10 +154,29 @@
   }
   const nbChiffres = s => s.replace(/[^0-9]/g,'').length;
 
-  function render(){
-    buildSeq(document.getElementById('mainLine'), entry === 'ERR' ? 'ERR' : withThousands(entry));
-    buildSeq(document.getElementById('exprLine'), withThousands(exprText));
+  // Réduit la taille d'écriture d'une ligne pour qu'elle tienne toujours dans le cadre.
+  function ajuster(el){
+    const base = +el.dataset.taille;
+    el.style.fontSize = base + 'px';
+    const largeur = el.clientWidth, contenu = el.scrollWidth;
+    if(contenu > largeur && largeur > 0) el.style.fontSize = Math.max(base * 0.3, base * largeur / contenu * 0.98) + 'px';
   }
+  // Ligne 1 : l'opération en cours ; ligne 2 : son résultat ; ligne 3 (grande) : le nombre tapé.
+  function render(){
+    const main = document.getElementById('mainLine'), expr = document.getElementById('exprLine'), res = document.getElementById('resultLine');
+    let exprAff = exprText, resAff = '';
+    if(justEvaluated){
+      resAff = entry;                                   // après « = » : le résultat
+    } else if(operator !== null){
+      exprAff = exprText + (entryTyped ? entry : '');   // opération en cours, nombre tapé compris
+      if(entryTyped){ const r = fmt(calculate(previous, parseFloat(entry), operator)); resAff = r; }
+    }
+    buildSeq(expr, withThousands(exprAff));
+    buildSeq(res, resAff === '' ? '' : (resAff === 'ERR' ? 'ERR' : withThousands(resAff)));
+    buildSeq(main, entry === 'ERR' ? 'ERR' : withThousands(entry));
+    [expr, res, main].forEach(ajuster);
+  }
+  window.addEventListener('resize', render);
 
   function pressDigit(d){
     if(justEvaluated || entry === 'ERR'){ entry='0'; exprText=''; justEvaluated=false; }

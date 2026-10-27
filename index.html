@@ -2,329 +2,255 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- Concepteur et créateur : Mahamadou Issiaka MAIGA (MAIGUS)
+     SPDX-License-Identifier: GPL-3.0-or-later -->
+<title>Calculatrice AYNEHA</title>
+<meta name="description" content="Calculatrice en chiffres AYNEHA : saisie et affichage de droite à gauche.">
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#171335">
+<meta name="theme-color" content="#08101e">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Maigus Calc">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
-<link rel="icon" href="icons/icon-192.png">
-<title>Essaie de chiffres (AYNEHA) — Calculatrice RTL</title>
+<meta name="apple-mobile-web-app-title" content="AYNEHA Calc">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <style>
+  @font-face{ font-family:"Ayneha Pro"; src:url("ayneha-pro.woff2") format("woff2"); font-display:block; }
   :root{
-    --night: #171335;
-    --night-2: #1F1A45;
-    --dune: #272052;
-    --dune-2: #302962;
-    --border: #423876;
-    --sand: #F1E4C8;
-    --sand-dim: #C9B98C;
-    --ochre: #E3A857;
-    --ochre-dim: #A97A38;
-    --river: #3FA79A;
-    --river-dim: #276F65;
-    --clay: #C1502E;
-    --text: #F1E4C8;
-    --text-muted: #9C93C4;
-    --screen-bg: #FBF3DF;
-    --screen-bg-2: #F4E9CB;
-    --screen-text: #201A3E;
-    --screen-text-muted: #6B5D8C;
-    --font-utility: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    --font-display: Georgia, 'Iowan Old Style', serif;
+    --nuit-950:#08101e; --nuit-900:#0b1526; --nuit-800:#13213a; --nuit-700:#1c2d4c; --nuit-600:#2a3e63;
+    --encre:#f3ece0; --encre-douce:#b9c0cf; --orange:#ff6a13; --orange-doux:#ff8a3d; --orange-fonce:#c94e0a;
+    --ecran:#fbf3df; --ecran-2:#efe3c6; --ecran-texte:#13213a; --ecran-doux:#5a6378;
+    --trait:rgba(243,236,224,0.13);
   }
-  *{ box-sizing: border-box; }
-  html,body{
-    margin:0; padding:0; min-height:100%;
-    background:
-      radial-gradient(900px 500px at 85% -8%, rgba(227,168,87,0.16), transparent 60%),
-      radial-gradient(700px 500px at 8% 105%, rgba(63,167,154,0.14), transparent 55%),
-      linear-gradient(180deg, var(--night) 0%, var(--night-2) 100%);
-    background-attachment: fixed;
-    color: var(--text);
-    font-family: var(--font-utility);
-    -webkit-tap-highlight-color: transparent;
+  *{ box-sizing:border-box; }
+  html{ background:var(--nuit-950); }
+  html,body{ margin:0; min-height:100%; }
+  body{
+    background:radial-gradient(ellipse at 70% 0%, #1c2d4c 0%, var(--nuit-950) 60%) fixed;
+    color:var(--encre); font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+    -webkit-tap-highlight-color:transparent;
   }
-  .wrap{ max-width: 480px; margin: 0 auto; padding: 28px 16px 60px; }
+  .wrap{ max-width:460px; margin:0 auto;
+    padding:calc(22px + env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) calc(40px + env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); }
+  header{ display:flex; align-items:center; gap:12px; margin-bottom:18px; }
+  header img{ width:48px; height:48px; border-radius:13px; flex:none; }
+  header h1{ margin:0; font-size:1.4rem; line-height:1.2; }
+  header h1 span{ color:var(--orange-doux); }
+  header p{ margin:2px 0 0; color:var(--encre-douce); font-size:.9rem; }
 
-  header{ text-align:center; margin-bottom: 20px; }
-  header .eyebrow{
-    font-size: 11px; letter-spacing: .22em; text-transform: uppercase;
-    color: var(--river); margin-bottom: 8px; font-weight: 600;
-  }
-  header h1{
-    font-family: var(--font-display); font-weight: 400; font-size: 30px; margin: 0;
-    color: var(--ochre); letter-spacing: .01em;
-  }
-  header p{ color: var(--text-muted); font-size: 13px; margin: 8px 0 0; line-height:1.6; }
+  .card{ background:var(--nuit-800); border:1px solid var(--trait); border-radius:20px; padding:16px; box-shadow:0 16px 44px rgba(0,0,0,.4); }
 
-  .card{
-    background: linear-gradient(165deg, var(--dune) 0%, var(--dune-2) 100%);
-    border: 1px solid var(--border);
-    border-radius: 18px;
-    padding: 18px;
-    margin-bottom: 18px;
-    box-shadow: 0 20px 40px -20px rgba(9, 6, 26, 0.6), inset 0 1px 0 rgba(255,255,255,0.04);
-  }
+  /* --- Écran : chiffres de la police AYNEHA, posés de droite à gauche (row-reverse) --- */
+  .display{ background:linear-gradient(170deg, var(--ecran) 0%, var(--ecran-2) 100%); border-radius:14px;
+    padding:16px 16px 12px; margin-bottom:14px; box-shadow:inset 0 2px 8px rgba(19,33,58,.18); }
+  .seq{ display:flex; flex-direction:row-reverse; align-items:center; flex-wrap:nowrap; overflow:hidden; gap:.08em; justify-content:flex-start; }
+  .expr-line{ min-height:28px; font-size:24px; color:var(--ecran-doux); }
+  .main-line{ min-height:66px; margin-top:4px; font-size:56px; color:var(--ecran-texte); }
+  .u{ font-family:"Ayneha Pro", sans-serif; line-height:1; }
+  .u.op{ font-family:system-ui,sans-serif; font-weight:600; color:var(--orange-fonce); padding:0 .12em; }
+  /* Séparateur de milliers : petit point orange bien visible, à mi-hauteur. */
+  .u.sep{ width:.16em; height:.16em; border-radius:50%; background:var(--orange); margin:0 .14em; align-self:center; }
+  /* Virgule décimale : rond CSS posé en bas (dessin validé). */
+  .u.dec{ width:.12em; height:.12em; min-width:6px; min-height:6px; border-radius:50%; background:var(--orange-fonce); align-self:flex-end; margin:0 .08em .12em; }
+  .u.err{ font-family:system-ui,sans-serif; font-weight:700; color:var(--orange-fonce); font-size:.6em; }
+  .tag{ display:inline-block; margin-top:8px; font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--ecran-doux);
+    border:1px solid rgba(90,99,120,.4); border-radius:20px; padding:3px 10px; }
 
-  /* --- Display --- */
-  .display{
-    background: linear-gradient(165deg, var(--screen-bg) 0%, var(--screen-bg-2) 100%);
-    border: 1px solid #D8C79A;
-    border-radius: 14px;
-    padding: 20px 18px 16px;
-    margin-bottom: 16px;
-    box-shadow: inset 0 2px 8px rgba(90, 70, 30, 0.15);
-  }
-  .seq{
-    display:flex; flex-direction: row-reverse; align-items:center; flex-wrap: nowrap;
-    overflow-x:auto; gap: 5px; scrollbar-width: none;
-  }
-  .seq::-webkit-scrollbar{ display:none; }
-  .expr-line.seq{ min-height: 20px; }
-  .expr-line .u{ font-size: 18px; color: var(--screen-text-muted); }
-  .expr-line img{ height: 22px; width:auto; mix-blend-mode: multiply; opacity: .85; }
-  .main-line.seq{ min-height: 62px; margin-top: 6px; }
-  .main-line .u{ font-size: 54px; line-height:1; color: var(--screen-text); }
-  .main-line img{ height: 56px; width:auto; mix-blend-mode: multiply; }
-  .u.sep{ color: var(--clay); font-size: 0.18em; align-self: center; margin: 0 2px; }
-  .u.dec{ display:inline-block; align-self:flex-end; width:6px; height:6px; border-radius:50%; background: var(--clay); margin: 0 0 4px 0; }
-  .rtl-tag{
-    display:inline-block; margin-top:10px; font-size: 10px; letter-spacing: .14em;
-    text-transform: uppercase; color: var(--river-dim);
-    border: 1px solid var(--river-dim); border-radius: 20px; padding: 3px 10px;
-    background: rgba(63,167,154,0.12);
-  }
-
-  /* --- Keypad --- */
-  .keypad{ display:grid; grid-template-columns: repeat(4, 1fr); gap: 11px; }
+  /* --- Pavé --- */
+  .keypad{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
   button.key{
-    font-family: var(--font-utility);
-    background: var(--dune-2); border: 2px solid rgba(241,228,200,0.28); color: var(--text);
-    border-radius: 12px; padding: 13px 0; font-size: 20px; cursor:pointer; user-select:none;
-    transition: transform .06s ease, background .15s ease;
-    box-shadow: 0 2px 0 rgba(0,0,0,0.35);
+    font-family:system-ui,sans-serif; background:var(--nuit-700); border:1px solid var(--trait); color:var(--encre);
+    border-radius:14px; min-height:62px; font-size:24px; cursor:pointer; user-select:none;
+    transition:transform .06s ease, filter .15s ease; box-shadow:0 3px 0 rgba(0,0,0,.35);
   }
-  button.key:active{ transform: scale(0.95); background: var(--night-2); }
+  button.key:active{ transform:translateY(2px); box-shadow:0 1px 0 rgba(0,0,0,.35); }
+  button.key:focus-visible{ outline:2px solid var(--orange-doux); outline-offset:2px; }
+  button.key.digit{ background:linear-gradient(170deg, #fbf3df 0%, #e9dcbc 100%); color:var(--ecran-texte); border-color:#c9b98c;
+    font-family:"Ayneha Pro", sans-serif; font-size:40px; box-shadow:0 3px 0 #a99a70; }
+  button.key.digit:active{ box-shadow:0 1px 0 #a99a70; }
+  button.key.op{ color:var(--orange-doux); font-weight:700; font-size:28px; }
+  button.key.equals{ background:linear-gradient(170deg, var(--orange-doux) 0%, var(--orange-fonce) 100%); color:var(--nuit-950); font-weight:800; font-size:30px; border-color:transparent; box-shadow:0 3px 0 #8c3606; }
+  button.key.clear{ color:#ff9b8a; }
+  button.key.back svg{ width:28px; height:28px; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  button.key.decimal span{ display:inline-block; width:10px; height:10px; border-radius:50%; background:var(--orange-doux); transform:translateY(10px); }
 
-  /* digit keys styled as small stamped clay/sand tiles — echoes the livestock-mark
-     origin of the glyphs themselves */
-  button.key.digit{
-    display:flex; align-items:center; justify-content:center; min-height: 64px;
-    background: linear-gradient(165deg, var(--sand) 0%, var(--sand-dim) 100%);
-    border: 2px solid #6B5C34;
-    box-shadow: 0 3px 0 #6B5C34, inset 0 1px 0 rgba(255,255,255,0.5);
-  }
-  button.key.digit:active{ box-shadow: 0 1px 0 #6B5C34, inset 0 1px 0 rgba(255,255,255,0.5); transform: translateY(2px) scale(0.97); }
-  button.key.digit img{ height: 42px; width:auto; mix-blend-mode: multiply; }
-  button.key.digit .fallback{ font-size: 26px; color: var(--night); }
-
-  button.key.op{ color: var(--ochre); font-size: 26px; font-weight:700; border-color: rgba(227,168,87,0.35); }
-  button.key.equals{
-    background: linear-gradient(165deg, var(--ochre) 0%, var(--ochre-dim) 100%);
-    color: var(--night); font-weight:bold; border-color: #7A5726; font-size: 24px;
-    box-shadow: 0 3px 0 #7A5726;
-  }
-  button.key.equals:active{ box-shadow: 0 1px 0 #7A5726; }
-  button.key.clear{ color: var(--clay); border-color: rgba(193,80,46,0.4); }
-  button.key.back-rtl{ transform: scaleX(-1); }
-  button.key.back-rtl:active{ transform: scaleX(-1) scale(0.95); }
-
-  footer{ text-align:center; font-size: 11px; color: var(--text-muted); margin-top: 26px; line-height:1.7; }
+  footer{ text-align:center; font-size:12px; color:var(--encre-douce); margin-top:22px; line-height:1.7; }
+  footer strong{ color:var(--orange-doux); font-weight:600; }
+  footer a{ color:var(--encre-douce); }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <div class="eyebrow">Alphabet Songhay</div>
-    <h1>Calculatrice AYNEHA</h1>
-    <p>Affichage et saisie de droite-à-gauche (RTL).<br></p>
+    <img src="icons/icon-192.png" alt="" width="48" height="48">
+    <div>
+      <h1>Calculatrice <span>AYNEHA</span></h1>
+      <p>Chiffres AYNEHA, saisie et affichage de droite à gauche.</p>
+    </div>
   </header>
 
   <div class="card">
-    <div class="display">
+    <div class="display" aria-live="polite">
       <div class="expr-line seq" id="exprLine"></div>
       <div class="main-line seq" id="mainLine"></div>
-      <span class="rtl-tag">RTL actif</span>
+      <span class="tag">Droite à gauche</span>
     </div>
     <div class="keypad" id="keypad"></div>
   </div>
 
   <footer>
-    FICHIER AUTONOME — ESSAI & ADAPTATION.<br>
-    Mahamadou Issiaka MAIGA<br>© MAIGUS - 2026
+    Concepteur et créateur : <strong>Mahamadou Issiaka MAIGA (MAIGUS)</strong><br>
+    <a href="https://ayneha.org" target="_blank" rel="noopener">ayneha.org</a> · Logiciel libre (GPL v3) · © 2026
   </footer>
 </div>
 
 <script>
 (function(){
-  const DEFAULT_IMAGES = [
-    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAARcAAAHFAQAAAADwXoBdAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAACYktHRAAB3YoTpAAAAAlwSFlzAAAOwwAADsMBx2+oZAAAAAd0SU1FB+oHGwoyBke36lgAAABeSURBVGje7dWxDQAgDMCwMvE2lwMPIKpKbDiz98RKm/G1iaTGMAzDMBXTj8cZDMMwDMMwDMMwDMMwDMMwDMMwDMMwDMMwDMMwDMMwDMMwDMMwZXOJYRiGYV6atK/NBmj4kmmQ2RCVAAAAAElFTkSuQmCC",
-    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAARcAAAHFAQAAAADwXoBdAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAACYktHRAAB3YoTpAAAAAlwSFlzAAAOwwAADsMBx2+oZAAAAAd0SU1FB+oHGwoyBke36lgAAABXSURBVGje7cq5DQAgDASwY3Mm5xkAKQ2iwa6dWRpxznq25jiO4ziO4ziO4ziO4ziO4ziO4ziO4ziO4ziO4ziO4ziO4ziO4ziO4ziPTwqO4ziOc/OUvj4L9bBuW88ISeMAAAAASUVORK5CYII=",
-    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAARcAAAHFAQAAAADwXoBdAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAACYktHRAAB3YoTpAAAAAlwSFlzAAAOwwAADsMBx2+oZAAAAAd0SU1FB+oHGwoyBke36lgAAABkSURBVGje7dkxCsAgFETBzc09uVGwFX6qIDivnn6LzVvWw+xrmT0MwzAMwzAMwzAMwzAMwzAMwzAMw2xNihiGYRjmqzlt4xiGYRiGYRiGYRiGYRiGYU4wKWIYhmGYnz671dVmADfTnU/sJwMhAAAAAElFTkSuQmCC",
-    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAARcAAAHFAQAAAADwXoBdAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAACYktHRAAB3YoTpAAAAAlwSFlzAAAOwwAADsMBx2+oZAAAAAd0SU1FB+oHGwoyBke36lgAAABiSURBVGje7dmhFcAgFATBS+dUHhB4fh4iAmb1dLDpZW+uNil6GIZhGOajWdQYhmEYhmEYhmEYhmEYhmFONCliGIZhGK+NYRiGYRiGYRiGYRiGYRhm36SIYRiGYX56drOrzQBQT8xD6AAufwAAAABJRU5ErkJggg==",
-    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAARcAAAHFAQAAAADwXoBdAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAACYktHRAAB3YoTpAAAAAlwSFlzAAAOwwAADsMBx2+oZAAAAAd0SU1FB+oHGwoyBke36lgAAABfSURBVGje7dWpEQAgDADBoGibynkKYCYgUOzp9RcjrQezr8WqMAzDMAzDMAzDMAzDMAzDMAzDMAyzNZHEMAzDMFemHnyHYRiGYRiGYRiGYRiGYRiGYRiGYZgnJu1rMwEV6/V2YdKJQQAAAABJRU5ErkJggg==",
-    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAARcAAAHFAQAAAADwXoBdAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAACYktHRAAB3YoTpAAAAAlwSFlzAAAOwwAADsMBx2+oZAAAAAd0SU1FB+oHGwoyBke36lgAAABfSURBVGje7dWxAQAQEMDAV1nb5NjAU2i41NcnRlqPr00kFYZhGIbZNIsawzAMwzAMwzAMwzAMwzDMiyaSGIZhGObI1MV9GIZhGIZhGIZhGIZhGIZhGIZhGIa5atK+NhN8wlrSzjV2gAAAAABJRU5ErkJggg==",
-    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAARcAAAHFAQAAAADwXoBdAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAACYktHRAAB3YoTpAAAAAlwSFlzAAAOwwAADsMBx2+oZAAAAAd0SU1FB+oHGwoyBke36lgAAABeSURBVGje7dWhFgAQEADBk/y2L0dQvXcUxWyevjHSenxtIqkwDMMwzI2p2+M0hmEYhmEYhmEYhmEYhmEYhmGYh2bFMAzDMAzDMAzDMAzDMAzDMAzDMAzDMIcm7WszAVsYEP2niQhGAAAAAElFTkSuQmCC",
-    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAARcAAAHFAQAAAADwXoBdAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAACYktHRAAB3YoTpAAAAAlwSFlzAAAOwwAADsMBx2+oZAAAAAd0SU1FB+oHGwoyBke36lgAAABiSURBVGje7dmxDcAgDABBp2LtTB4QSm8QBY3v69vgoy/7orSJWWMYhmEYhmEYhmEYhmEYhmEYhmEY5sgkPQzDMAyzaZJehmEYhmEYhmEYhmEYhmGYqiYWMQzDMMylZ/dX2gx9EUBh2mHIGgAAAABJRU5ErkJggg==",
-    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAARcAAAHFAQAAAADwXoBdAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAACYktHRAAB3YoTpAAAAAlwSFlzAAAOwwAADsMBx2+oZAAAAAd0SU1FB+oHGwoyBke36lgAAABoSURBVGje7dgxDoAwDARBp8q3eXnIBxCGAsnCs/X0J12caStam0gaDMMwDPPGzAe7wzAMwzAMwzAMwzAMwzAM8ydzU9kvl2EYhqlprnfnYBiGYRiGYRiGYRiGYRiGYRiGYRjme5PW2mw80Nzu02INeAAAAABJRU5ErkJggg==",
-    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAARcAAAHFAQAAAADwXoBdAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAACYktHRAAB3YoTpAAAAAlwSFlzAAAOwwAADsMBx2+oZAAAAAd0SU1FB+oHGwoyBke36lgAAABoSURBVGje7dkhFsAgDETBoHptTk4rsDxCTUUzX49fsXGnjShtIqkxDMMwzBtzLRenMwzDMAzDMAzDMAzDMAzD/NZsYhiGYZhTs6kzDMMwDMMwDMMwDMMwDMNUNZHEMAzDMB99drPS5gEu9E+0ey0+RwAAAABJRU5ErkJggg==",
-  ];
-  let digitImages = DEFAULT_IMAGES;
-  let entry = '0';
-  let previous = null;
-  let operator = null;
-  let justEvaluated = false;
-  let exprText = '';
+  "use strict";
+  // Chiffres AYNEHA du plan 16 (police Ayneha Pro) : U+10FF7C (0) à U+10FF85 (9).
+  const DIG = Array.from({length:10}, (_, i) => String.fromCodePoint(0x10FF7C + i));
+  const MAX_CHIFFRES = 15;                  // au-delà, les calculs ne sont plus exacts
+  const LIMITE = 1e15;
 
-  // --- render helpers: build a right-to-left sequence of chars/images ---
-  function buildSeq(container, str, unitClass, imgHeightClass){
-    container.innerHTML = '';
+  let entry = '0', previous = null, operator = null, justEvaluated = false, exprText = '';
+  let entryTyped = false;                   // vrai dès qu'un chiffre a été tapé après un opérateur
+
+  const SEP = ' ';
+  function groupInteger(s){ let o=''; for(let i=0;i<s.length;i++){ if(i>0 && (s.length-i)%3===0) o+=SEP; o+=s[i]; } return o; }
+  function formatToken(t){
+    const neg = t.startsWith('-'); if(neg) t = t.slice(1);
+    const d = t.indexOf('.');
+    const g = groupInteger(d===-1 ? t : t.slice(0,d)) + (d===-1 ? '' : '.' + t.slice(d+1));
+    return (neg ? '-' : '') + g;
+  }
+  const withThousands = s => s.replace(/-?\d+(\.\d+)?/g, formatToken);
+
+  // Affiche une suite en ordre logique ; le conteneur (row-reverse) place le 1er élément à droite.
+  function buildSeq(el, str){
+    el.replaceChildren();
+    if(str === 'ERR'){ const s=document.createElement('span'); s.className='u err'; s.textContent='Erreur'; el.appendChild(s); return; }
     for(const ch of str){
-      if(ch >= '0' && ch <= '9'){
-        const idx = parseInt(ch,10);
-        if(digitImages[idx]){
-          const img = document.createElement('img');
-          img.src = digitImages[idx];
-          container.appendChild(img);
-          continue;
-        }
-      }
-      const span = document.createElement('span');
-      if(ch === THOUSANDS_SEP){
-        span.className = unitClass + ' sep';
-        span.textContent = '\u00B7'; // point médian — repère visuel du groupement de 3
-      } else if(ch === '.'){
-        span.className = unitClass + ' dec';
-        span.textContent = '';
-      } else {
-        span.className = unitClass;
-        span.textContent = (ch === '-' ? '−' : ch);
-      }
-      container.appendChild(span);
+      const s = document.createElement('span');
+      if(ch >= '0' && ch <= '9'){ s.className='u'; s.textContent = DIG[+ch]; }
+      else if(ch === SEP){ s.className='u sep'; }
+      else if(ch === '.'){ s.className='u dec'; }
+      else { s.className='u op'; s.textContent = (ch === '-' ? '−' : ch); }
+      el.appendChild(s);
     }
   }
 
-  function fmt(num){
-    if(!isFinite(num)) return 'ERR';
-    let s = Math.round(num * 1e10) / 1e10;
-    return String(s);
+  function fmt(n){
+    if(!isFinite(n) || Math.abs(n) >= LIMITE) return 'ERR';
+    let s = String(Math.round(n * 1e10) / 1e10);
+    if(/e/i.test(s)) s = Math.abs(n) < 1e-10 ? '0' : n.toFixed(10).replace(/\.?0+$/, '');
+    return s;
   }
   function calculate(a,b,op){
-    switch(op){
-      case '+': return a+b;
-      case '−': return a-b;
-      case '×': return a*b;
-      case '÷': return b===0 ? NaN : a/b;
-    }
+    switch(op){ case '+': return a+b; case '−': return a-b; case '×': return a*b; case '÷': return b===0 ? NaN : a/b; }
   }
-
-  const THOUSANDS_SEP = '\u202F'; // espace fine — insérée entre les groupes de 3 chiffres
-  function groupInteger(intPart){
-    let out = '';
-    for(let i=0;i<intPart.length;i++){
-      if(i>0 && (intPart.length-i)%3===0) out += THOUSANDS_SEP;
-      out += intPart[i];
-    }
-    return out;
-  }
-  function formatNumberToken(token){
-    const neg = token.startsWith('-');
-    if(neg) token = token.slice(1);
-    const dot = token.indexOf('.');
-    const intPart = dot===-1 ? token : token.slice(0,dot);
-    const decPart = dot===-1 ? null : token.slice(dot+1);
-    const grouped = groupInteger(intPart) + (decPart!==null ? '.'+decPart : '');
-    return (neg?'-':'') + grouped;
-  }
-  function withThousands(str){
-    return str.replace(/-?\d+(\.\d+)?/g, m => formatNumberToken(m));
-  }
+  const nbChiffres = s => s.replace(/[^0-9]/g,'').length;
 
   function render(){
-    buildSeq(document.getElementById('mainLine'), withThousands(entry), 'u');
-    buildSeq(document.getElementById('exprLine'), withThousands(exprText), 'u');
+    buildSeq(document.getElementById('mainLine'), entry === 'ERR' ? 'ERR' : withThousands(entry));
+    buildSeq(document.getElementById('exprLine'), withThousands(exprText));
   }
 
   function pressDigit(d){
-    if(justEvaluated){ entry='0'; exprText=''; justEvaluated=false; }
+    if(justEvaluated || entry === 'ERR'){ entry='0'; exprText=''; justEvaluated=false; }
+    if(nbChiffres(entry) >= MAX_CHIFFRES) return;
     entry = (entry === '0') ? d : entry + d;
+    entryTyped = true;
   }
   function pressDecimal(){
-    if(justEvaluated){ entry='0'; exprText=''; justEvaluated=false; }
+    if(justEvaluated || entry === 'ERR'){ entry='0'; exprText=''; justEvaluated=false; }
     if(!entry.includes('.')) entry += '.';
+    entryTyped = true;
   }
   function pressOperator(op){
+    if(entry === 'ERR') return;
+    // Changement d'opérateur sans nouveau nombre : on remplace simplement l'opérateur.
+    if(operator && !entryTyped && !justEvaluated){ operator = op; exprText = fmt(previous) + op; return; }
     if(operator && !justEvaluated){
-      previous = calculate(previous, parseFloat(entry), operator);
+      const r = calculate(previous, parseFloat(entry), operator);
+      if(fmt(r) === 'ERR'){ entry='ERR'; exprText=''; previous=null; operator=null; justEvaluated=true; return; }
+      previous = r;
     } else {
       previous = parseFloat(entry);
     }
-    operator = op;
-    exprText = fmt(previous) + op;
-    entry = '0';
-    justEvaluated = false;
+    operator = op; exprText = fmt(previous) + op; entry = '0'; entryTyped = false; justEvaluated = false;
   }
   function pressEquals(){
-    if(operator === null) return;
+    if(operator === null || entry === 'ERR') return;
     const b = parseFloat(entry);
-    const result = calculate(previous, b, operator);
+    const r = calculate(previous, b, operator);
     exprText = fmt(previous) + operator + fmt(b) + '=';
-    entry = isNaN(result) ? 'ERR' : fmt(result);
-    previous = null; operator = null; justEvaluated = true;
+    entry = fmt(r);
+    previous = null; operator = null; justEvaluated = true; entryTyped = false;
   }
-  function pressClear(){ entry='0'; previous=null; operator=null; exprText=''; justEvaluated=false; }
+  function pressClear(){ entry='0'; previous=null; operator=null; exprText=''; justEvaluated=false; entryTyped=false; }
   function pressBackspace(){
-    if(justEvaluated){ pressClear(); return; }
+    if(justEvaluated || entry === 'ERR'){ pressClear(); return; }
     entry = entry.length > 1 ? entry.slice(0,-1) : '0';
+    if(entry === '-') entry = '0';
   }
 
-  // --- build keypad ---
+  // --- Pavé (même disposition que la version précédente) ---
   const keypad = document.getElementById('keypad');
   const layout = [
-    ['C','clear'], ['⌫','back'], ['.','dec'], ['÷','op'],
-    ['9','d'], ['8','d'], ['7','d'], ['×','op'],
-    ['6','d'], ['5','d'], ['4','d'], ['−','op'],
-    ['3','d'], ['2','d'], ['1','d'], ['+','op'],
-    ['0','d'], ['=','eq']
+    ['C','clear','Effacer tout'], ['back','back','Effacer un chiffre'], ['.','dec','Virgule'], ['÷','op','Diviser'],
+    ['9','d'], ['8','d'], ['7','d'], ['×','op','Multiplier'],
+    ['6','d'], ['5','d'], ['4','d'], ['−','op','Soustraire'],
+    ['3','d'], ['2','d'], ['1','d'], ['+','op','Additionner'],
+    ['0','d'], ['=','eq','Égal']
   ];
-  layout.forEach(([label,type])=>{
-    const btn = document.createElement('button');
-    btn.className = 'key';
-    if(type==='clear'){ btn.classList.add('clear'); btn.textContent='C'; btn.onclick=()=>{pressClear(); render();}; }
-    else if(type==='back'){ btn.classList.add('back-rtl'); btn.textContent='⌫'; btn.onclick=()=>{pressBackspace(); render();}; }
-    else if(type==='dec'){ btn.classList.add('op'); btn.textContent='.'; btn.onclick=()=>{pressDecimal(); render();}; }
-    else if(type==='op'){ btn.classList.add('op'); btn.textContent=label; btn.onclick=()=>{pressOperator(label); render();}; }
-    else if(type==='eq'){ btn.classList.add('equals'); btn.textContent='='; btn.style.gridColumn='span 2'; btn.onclick=()=>{pressEquals(); render();}; }
-    else if(type==='d'){
-      const d = label;
-      btn.classList.add('digit');
-      btn.dataset.d = d;
-      renderDigitButton(btn, d);
-      if(d==='0') btn.style.gridColumn='span 2';
-      btn.onclick=()=>{pressDigit(d); render();};
-    }
-    keypad.appendChild(btn);
+  const actions = {};
+  layout.forEach(([label, type, aria]) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'key';
+    if(aria) b.setAttribute('aria-label', aria);
+    let act;
+    if(type === 'clear'){ b.classList.add('clear'); b.textContent = 'C'; act = pressClear; }
+    else if(type === 'back'){ b.classList.add('back');
+      // Flèche d'effacement orientée vers la droite : on lit et on efface de droite à gauche.
+      b.innerHTML = '<svg viewBox="0 0 24 24"><path d="M3 6h13l5 6-5 6H3z"/><path d="M8 9.5l5 5M13 9.5l-5 5"/></svg>';
+      act = pressBackspace; }
+    else if(type === 'dec'){ b.classList.add('op','decimal'); b.innerHTML = '<span></span>'; act = pressDecimal; }
+    else if(type === 'op'){ b.classList.add('op'); b.textContent = label; act = () => pressOperator(label); }
+    else if(type === 'eq'){ b.classList.add('equals'); b.textContent = '='; b.style.gridColumn = 'span 2'; act = pressEquals; }
+    else { b.classList.add('digit'); b.dataset.d = label; b.textContent = DIG[+label]; b.setAttribute('aria-label', label);
+      if(label === '0') b.style.gridColumn = 'span 2'; act = () => pressDigit(label); }
+    b.addEventListener('click', () => { act(); render(); });
+    actions[label] = act;
+    keypad.appendChild(b);
   });
 
-  function renderDigitButton(btn, d){
-    const idx = parseInt(d,10);
-    const img = digitImages[idx];
-    btn.innerHTML = img
-      ? `<img src="${img}">`
-      : `<span class="fallback">${d}</span>`;
-  }
+  // --- Clavier d'ordinateur ---
+  document.addEventListener('keydown', e => {
+    if(e.ctrlKey || e.metaKey || e.altKey) return;
+    const k = e.key;
+    let act = null;
+    if(/^[0-9]$/.test(k)) act = () => pressDigit(k);
+    else if(k === '.' || k === ',') act = pressDecimal;
+    else if(k === '+') act = () => pressOperator('+');
+    else if(k === '-') act = () => pressOperator('−');
+    else if(k === '*' || k === 'x' || k === 'X') act = () => pressOperator('×');
+    else if(k === '/') act = () => pressOperator('÷');
+    else if(k === 'Enter' || k === '=') act = pressEquals;
+    else if(k === 'Backspace') act = pressBackspace;
+    else if(k === 'Escape' || k === 'Delete' || k === 'c' || k === 'C') act = pressClear;
+    if(act){ e.preventDefault(); act(); render(); }
+  });
 
+  document.fonts.load('40px "Ayneha Pro"', DIG[0]).finally(render);
   render();
+  window.__calc = { pressDigit, pressOperator, pressEquals, pressClear, pressBackspace, pressDecimal, get entry(){ return entry; }, get expr(){ return exprText; } };
 })();
 </script>
 <script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').catch(()=>{});
-  });
+// Hors connexion et mises à jour (service worker « réseau d'abord » pour la page).
+if ('serviceWorker' in navigator && location.protocol === 'https:') {
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
 }
 </script>
 </body>

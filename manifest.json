@@ -1,14 +1,39 @@
 {
   "name": "Calculatrice AYNEHA",
-  "short_name": "AYNEHA CALC",
-  "start_url": ".",
-  "scope": ".",
+  "short_name": "AYNEHA Calc",
+  "description": "Calculatrice en chiffres AYNEHA, de droite à gauche. Concepteur et créateur : Mahamadou Issiaka MAIGA (MAIGUS).",
+  "version": "2.0",
+  "lang": "fr",
+  "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#12141A",
-  "theme_color": "#12141A",
+  "background_color": "#08101e",
+  "theme_color": "#08101e",
   "icons": [
-    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ]
 }
